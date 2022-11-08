@@ -1,0 +1,100 @@
+\documentclass[10pt]{article}
+\usepackage[total={170mm,230mm}]{geometry}
+
+\usepackage{cmap}
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage[russian]{babel}
+\usepackage{hyphsubst}
+
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{physics}
+\usepackage{wrapfig}
+\usepackage{cancel}
+\usepackage{pdfpages}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{subcaption}
+% \usepackage{bibtex}
+
+\title{Домашнее задание №6. Динамика гауссовского волнового пакета на фиксированном промежутке с использованием маскирующей функции}
+\author{Александр Козлов}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Формулировка задания}
+
+Рассматривается временное уравение Шрёдингера $i \partial_t \Psi = H \Psi$ с начальным условием $\Psi(k,t=0) = \exp(-k^2)$, где $k$ --- волновое число (в атомных единицах --- в которых, мы, собственно, и работаем --- тождественно импульсу). Необходимо воспроизвести свбодную (то есть $H=-\laplacian$ в атомарных единицах) динамику гауссовского волнового пакета на фиксированном промежутке с использованием маскирующей функции $M(x)$ и сравнить численное решение с аналитическим.
+
+\section{Решения задачи с использованием маскировочной функции}
+
+\subsection*{Сетка}
+Прежде всего зададим равномерную сетку
+\begin{equation}
+	x_0 = -R,\; x_1 = x_0 + \delta,\; x_2 = x_0 + 2\delta,\; \ldots,\; x_k = x_0 + k\delta,\; \ldots,\; x_M = x_0 + M \delta = R
+\end{equation}
+с шагом $\delta = 2R/M$, где $M$~---~целое положительное число, а $R$~---~положительное действительное число.
+
+\subsection*{Маскировочная функция}
+В качестве маскировочной функции возьмём такую:
+\begin{equation}
+	M(x) = 
+	\begin{cases}
+		-\dfrac{2}{\delta_M^3}(x+R-\delta_M)^3 - \dfrac{3}{\delta_M^2} (x+R-\delta_M)^2 + 1, &x\in(-R,\; -R+\delta_M);\\
+		1, &x\in(-R+\delta_M,\; R-\delta_M);\\
+		\dfrac{2}{\delta_M^3}(x-R+\delta_M)^3 - \dfrac{3}{\delta_M^2} (x-R+\delta_M)^2 + 1, &x\in(R-\delta_M,\; R)
+	\end{cases}
+\end{equation}
+
+\subsection*{Начальное условие}
+Начальное условие задано в виде функции импульса, нормированной таким образом, что $\int \dd{k} \abs{\Psi(k,t=0)}^2 = \sqrt{\pi/2}$. Однако, мы планируем решать задачу в координатном представлении, поэтому следует получить начальное условие в координатном представлении, для чего делаем преобразование Фурье и получаем
+\begin{equation}
+	\Psi(x,t=0) = c_1 \int \dd{k} e^{ikx}\, \Psi(k,t=0) = c_1 \int \dd{k} e^{-k^2+ikx} = c_1 \sqrt{\pi}\, e^{-x^2/4},
+\end{equation}
+где $c_1$ --- нормировочный коэффициент. Выберем $c_1$ таким образом, чтобы волновая функция была нормирована на 1
+\begin{equation}
+	c_1^2 \pi \sqrt{2\pi} = 1,\quad c_1 = 2^{-1/4} \pi^{-3/4}.
+\end{equation}
+Отсюда следует, что начальное условие в координатном представлении имеет вид
+\begin{equation}
+	\Psi(x,\,t=0) = \dfrac{e^{-x^2/4}}{\sqrt[4]{2\pi}}.
+\end{equation}
+
+\subsection*{Аналитическое решение}
+В ходе лекционных занятий было получено аналитическое решение задачи, оно имеет вид:
+\begin{equation}
+	\Psi(x,\,t) = \dfrac{e^{-x^2/4(1+it)}}{\sqrt[4]{2\pi}\sqrt{1+it}}.
+\end{equation}
+
+\subsection*{Итерационная последовательность волновых функций}
+Для решения задачи строим итерационную последовательность волновых функций, обозначать которые будем через $\Psi^{(M)}_n(x\in[-R,\,R])$, где $n$ --- номер шага по времени. Волновая функция $\Psi^{(M)}_n(x)$, полученная предложенным алгоритмом решения, является приближением точного решения $\Psi(x,\, t=n\tau)$, где $\tau$ --- шаг по времени. Последовательность функций $\qty{\Psi^{(M)}_n(x)}_{n=0}^{N}$ формируется следующим образом:
+\begin{equation}
+	\begin{split}
+		\Psi^{(M)}_0(x) &= M(x)\, \Psi(x,t=0),\\
+		\Psi^{(M)}_1(x) &= M(x)\, e^{-i H \tau} \Psi^{(M)}_0(x),\\
+		&\ldots\\
+		\Psi^{(M)}_n(x) &= M(x)\, e^{-i H \tau} \Psi^{(M)}_{n-1}(x),\\
+		&\ldots\\
+		\Psi^{(M)}_N(x) &= M(x)\, e^{-i H \tau} \Psi^{(M)}_{N-1}(x).
+	\end{split}
+\end{equation}
+
+Оператор эволюции $e^{-i H \tau}$, выбрав шаг по времени достаточно малым, можно расчитывать используя Паде-апрроксимацию.
+
+\subsection*{Метод Рунге--Кутты 4-го порядка}
+Для решения эволюционной задачи можно использовать и метод Рунге--Кутты 4-го порядка, если привести исходное временное уравнение Шрёдингера к эквивалентному уравнению
+\begin{equation}
+ \partial_t \Psi = f(x, \Psi),\quad
+ f(x, \Psi) = i\dfrac{\Psi(x-\Delta x, t) - 2 \Psi(x, t) + \Psi(x+\Delta x, t)}{2 (\Delta x)^2}.
+\end{equation}
+
+
+\end{document}
