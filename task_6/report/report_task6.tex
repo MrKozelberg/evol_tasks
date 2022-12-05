@@ -46,12 +46,12 @@
 \subsection*{Маскировочная функция}
 В качестве маскировочной функции возьмём такую:
 \begin{equation}
-	M(x) = 
-	\begin{cases}
-		-\dfrac{2}{\delta_M^3}(x+R-\delta_M)^3 - \dfrac{3}{\delta_M^2} (x+R-\delta_M)^2 + 1, &x\in(-R,\; -R+\delta_M);\\
-		1, &x\in(-R+\delta_M,\; R-\delta_M);\\
-		\dfrac{2}{\delta_M^3}(x-R+\delta_M)^3 - \dfrac{3}{\delta_M^2} (x-R+\delta_M)^2 + 1, &x\in(R-\delta_M,\; R)
-	\end{cases}
+	M(x) = \exp\qty[-\qty(\dfrac{x}{R-\delta_M})^{10}].
+% 	\begin{cases}
+% 		-\dfrac{2}{\delta_M^3}(x+R-\delta_M)^3 - \dfrac{3}{\delta_M^2} (x+R-\delta_M)^2 + 1, &x\in(-R,\; -R+\delta_M);\\
+% 		1, &x\in(-R+\delta_M,\; R-\delta_M);\\
+% 		\dfrac{2}{\delta_M^3}(x-R+\delta_M)^3 - \dfrac{3}{\delta_M^2} (x-R+\delta_M)^2 + 1, &x\in(R-\delta_M,\; R)
+% 	\end{cases}
 \end{equation}
 
 \subsection*{Начальное условие}
@@ -88,13 +88,6 @@
 \end{equation}
 
 Оператор эволюции $e^{-i H \tau}$, выбрав шаг по времени достаточно малым, можно расчитывать используя Паде-апрроксимацию.
-
-\subsection*{Метод Рунге--Кутты 4-го порядка}
-Для решения эволюционной задачи можно использовать и метод Рунге--Кутты 4-го порядка, если привести исходное временное уравнение Шрёдингера к эквивалентному уравнению
-\begin{equation}
- \partial_t \Psi = f(x, \Psi),\quad
- f(x, \Psi) = i\dfrac{\Psi(x-\Delta x, t) - 2 \Psi(x, t) + \Psi(x+\Delta x, t)}{2 (\Delta x)^2}.
-\end{equation}
 
 
 \end{document}
